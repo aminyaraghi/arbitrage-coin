@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Flask Template Example</title>
+  </head>
+  <body>
+    <code>
+      <!--<p>
+        <h4>&nbsp;&nbsp;Binance : <span class="binance_price"></span></h4>
+        <h4>CoinGecko : <span class="coingecko_price"></span></h4>
+        <h4>&nbsp;&nbsp;Nobitex : <span class="nobitex_price"></span></h4>
+        <h4>&nbsp;&nbsp;&nbsp;Bitmex : <span class="bitmex_price"></span></h4>
+        <h4>&nbsp;&nbsp;&nbsp;&nbsp;HUOBI : <span class="huobi_price"></span></h4>
+      </p>-->
+      <p>
+        <h2>&nbsp;Minimum : <span class="minkey"></span></h2>
+        <h2>&nbsp;Maximum : <span class="maxkey"></span></h2>
+        <h2>Diffrencial : <span class="diff"></span> $</h2>
+      </p>
+    </code>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+   <script>
+   $(document).ready(function(){
+
+	   timer();
+
+	   function timer(){
+		   
+		  URL = "{{ url_for('get_data') }}"
+		  $(document).ready(function() {
+		  $.ajax({
+			  url: URL,
+			  type: "GET",
+			  dataType: "json"
+			  }).then(function(data) {
+			    //$('.binance_price')[0].innerHTML= data['binance'];
+          //$('.coingecko_price')[0].innerHTML= data['coingecko'];
+          //$('.nobitex_price')[0].innerHTML= data['nobitex'];
+          //$('.bitmex_price')[0].innerHTML= data['bitmex'];
+          //$('.huobi_price')[0].innerHTML= data['huobi'];
+          $('.diff')[0].innerHTML= data['diff'];
+          $('.minkey')[0].innerHTML= data['minkey'] + " = " + data[data['minkey']];
+          $('.maxkey')[0].innerHTML= data['maxkey'] + " = " + data[data['maxkey']];
+          drawChart(data)
+			  });
+		  });
+		  setTimeout(timer,5000);
+	   }	  
+   });
+   </script>
+
+
+
+  <script src="https://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    <script type="text/javascript">
+      function drawChart(mydata){
+            Highcharts.chart('container', {
+              chart: {
+                  type: 'bar'
+              },
+              title: {
+                  text: ''
+              },
+              subtitle: {
+                  text: ''
+              },
+              xAxis: {
+                  type: 'category',
+                  labels: {
+                      rotation: 0,
+                      style: {
+                          fontSize: '15px',
+                          fontFamily: 'sans-serif'
+                      }
+                  }
+              },
+              yAxis: {
+                  min: mydata['min'],
+                  title: {
+                      text: 'Price ($)'
+                  }
+              },
+              legend: {
+                  enabled: false
+              },
+              tooltip: {
+                  pointFormat: 'Price: <b>{point.y:.1f} $</b>'
+              },
+              series: [{
+                  name: 'Price',
+                  data: [
+                      ['binance', mydata['binance']],
+                      ['coingecko' , mydata['coingecko']],
+                      ['nobitex' , mydata['nobitex']],
+                      ['bitmex' , mydata['bitmex']],
+                      ['huobi' , mydata['huobi']]
+                  ],
+                  dataLabels: {
+                      enabled: true,
+                      rotation: 0,
+                      color: '#FFFFFF',
+                      align: 'right',
+                      format: '{point.y:.1f}', // one decimal
+                      y: 10, // 10 pixels down from the top
+                      style: {
+                          fontSize: '15px',
+                          fontFamily: 'Verdana, sans-serif'
+                      }
+                  }
+              }]
+            });
+      }
+    </script>
+     <div id="container" style="height: 400px; min-width: 310px; max-width: 1000px"></div>
+  </body>
+</html>
